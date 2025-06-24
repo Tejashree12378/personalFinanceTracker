@@ -32,7 +32,12 @@ func main() {
 	RegisterRoutes(r, DB)
 
 	// Start server
-	if err := r.Run(); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
 }
