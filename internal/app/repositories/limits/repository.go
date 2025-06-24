@@ -13,8 +13,8 @@ type Repository struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *Repository {
-	return &Repository{db: db}
+func New(db *gorm.DB) Repository {
+	return Repository{db: db}
 }
 
 func (r *Repository) Create(ctx context.Context, limit *models.Limit) error {
