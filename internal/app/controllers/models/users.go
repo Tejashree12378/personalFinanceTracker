@@ -1,14 +1,10 @@
 package models
 
-import serviceModel "personalFinanceTracker/internal/app/services/models"
+import (
+	"time"
 
-type UserCreateRequest struct {
-	ID          uint
-	FirstName   string `json:"first_name" binding:"required"`
-	LastName    string `json:"last_name" binding:"required"`
-	Email       string `json:"email" binding:"required,email"`
-	PhoneNumber string `json:"phone_number" binding:"required"`
-}
+	serviceModel "personalFinanceTracker/internal/app/services/models"
+)
 
 type UserUpdateRequest struct {
 	ID          uint
@@ -18,13 +14,32 @@ type UserUpdateRequest struct {
 	PhoneNumber *string `json:"phone_number" binding:"required"`
 }
 
-func (req *UserCreateRequest) ToServiceModel() *serviceModel.User {
+type SignUpRequest struct {
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Status      string `json:"status"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	PhoneNumber string `json:"phone_number"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (req *SignUpRequest) ToServiceModel() *serviceModel.User {
+	updatedAt := time.Now()
+
 	return &serviceModel.User{
-		FirstName:   req.FirstName,
-		LastName:    req.LastName,
-		Email:       req.Email,
-		PhoneNumber: req.PhoneNumber,
-		Status:      "active",
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		Status:       req.Status,
+		Email:        req.Email,
+		PasswordHash: req.Password,
+		PhoneNumber:  req.PhoneNumber,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    &updatedAt,
 	}
 }
 

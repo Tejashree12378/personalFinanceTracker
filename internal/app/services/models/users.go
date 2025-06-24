@@ -7,28 +7,30 @@ import (
 )
 
 type User struct {
-	ID          int
-	FirstName   string
-	LastName    string
-	Status      string
-	Email       string
-	PhoneNumber string
-	CreatedAt   time.Time
-	UpdatedAt   *time.Time
-	DeletedAt   *time.Time
+	ID           int
+	FirstName    string
+	LastName     string
+	Status       string
+	Email        string
+	PasswordHash string
+	PhoneNumber  string
+	CreatedAt    time.Time
+	UpdatedAt    *time.Time
+	DeletedAt    *time.Time
 }
 
 func (u *User) ToRepoModel() *repoModels.User {
 	return &repoModels.User{
-		ID:          u.ID,
-		FirstName:   u.FirstName,
-		LastName:    u.LastName,
-		Status:      u.Status,
-		Email:       u.Email,
-		PhoneNumber: u.PhoneNumber,
-		CreatedAt:   u.CreatedAt,
-		UpdatedAt:   u.UpdatedAt,
-		DeletedAt:   u.DeletedAt,
+		ID:           u.ID,
+		FirstName:    u.FirstName,
+		LastName:     u.LastName,
+		Status:       u.Status,
+		Email:        u.Email,
+		PasswordHash: u.PasswordHash,
+		PhoneNumber:  u.PhoneNumber,
+		CreatedAt:    u.CreatedAt,
+		UpdatedAt:    u.UpdatedAt,
+		DeletedAt:    u.DeletedAt,
 	}
 }
 

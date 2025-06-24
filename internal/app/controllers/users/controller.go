@@ -12,10 +12,11 @@ import (
 )
 
 type userService interface {
-	CreateUser(ctx context.Context, user *serviceModel.User) error
 	GetUserByID(ctx context.Context, id int) (*serviceModel.User, error)
 	UpdateUser(ctx context.Context, user *serviceModel.User) error
 	DeleteUser(ctx context.Context, id int) error
+	SignUp(ctx context.Context, user *serviceModel.User) error
+	Login(ctx context.Context, email, password string) (string, error)
 }
 
 type UserController struct {
@@ -24,22 +25,6 @@ type UserController struct {
 
 func NewUserController(s userService) *UserController {
 	return &UserController{s}
-}
-
-func (c *UserController) CreateUser(ctx *gin.Context) {
-	var user *models.UserCreateRequest
-
-	if err := ctx.ShouldBindJSON(&user); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	if err := c.service.CreateUser(ctx.Request.Context(), user.ToServiceModel()); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not create user"})
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, user)
 }
 
 func (c *UserController) GetUserByID(ctx *gin.Context) {
@@ -86,4 +71,38 @@ func (c *UserController) DeleteUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "user deleted"})
+}
+
+func (uc *UserController) SignUp(c *gin.Context) {
+	var req *models.SignUpRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user := req.ToServiceModel()
+	if err := uc.service.SignUp(c.Request.Context(), user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not sign up user"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
+}
+
+func (uc *UserController) Login(c *gin.Context) {
+	var req *models.LoginRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := uc.service.Login(c.Request.Context(), req.Email, req.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }

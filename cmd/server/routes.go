@@ -25,10 +25,11 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 
 	userRoutes := v1.Group("/users")
 	{
-		userRoutes.POST("", userCtrl.CreateUser)
 		userRoutes.GET("/:id", userCtrl.GetUserByID)
 		userRoutes.PATCH("/:id", userCtrl.UpdateUser)
 		userRoutes.DELETE("/:id", userCtrl.DeleteUser)
+		userRoutes.POST("/signup", userCtrl.SignUp)
+		userRoutes.POST("/login", userCtrl.Login)
 	}
 
 	// expenses
@@ -49,7 +50,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	limitSrv := limitService.NewLimitService(limitRepo)
 	limitCtrl := limitController.NewLimitController(limitSrv)
 
-	limitRoutes := v1.Group("/expenses")
+	limitRoutes := v1.Group("/limits")
 	{
 		limitRoutes.POST("", limitCtrl.CreateLimit)
 		limitRoutes.GET("/:id", limitCtrl.GetLimit)
